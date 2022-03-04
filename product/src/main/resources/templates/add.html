@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Product Inventory</title>
+ <link
+      rel="stylesheet"
+      href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css"
+    />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+</head>
+  <body>
+    <div class="col-sm-6 col-sm-offset-3">
+      <h3>Add Product</h3>
+
+        <div id="id-group" class="form-group">
+          <label for="id">Product ID:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="id"
+            name="id-name"
+            required
+          />
+        </div>
+        
+        <div id="category-group" class="form-group">
+          <label for="category">Product Category:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="category"
+            name="category-name"
+          />
+        </div>
+        
+        <div id="name-group" class="form-group">
+          <label for="name">Product Name:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="name"
+            name="name-name"
+          />
+        </div>
+        
+        <div id="description-group" class="form-group">
+          <label for="description">Product Description:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="description"
+            name="description-name"
+          />
+        </div>
+        
+        <div id="units-group" class="form-group">
+          <label for="units">Product Units:</label>
+          <input
+            type="number"
+            class="form-control"
+            id="units"
+            name="units-name"
+            min="0" oninput="validity.valid||(value='');"
+          />
+        </div>
+        
+        <button type="submit" id="add" class="btn btn-success">Add
+        </button>
+        <button class="btn btn-success" onclick="history.back()">Back
+        </button>
+        
+    </div>
+    
+  <script> 
+  
+    //onClick Add button, sends product data to server
+  	$("#add").on("click", function(e) {
+  	    e.preventDefault();
+  	    
+  	  var product = {
+  			id: $("#id").val(),
+	          category: $("#category").val(),
+	          name: $("#name").val(),
+	          description: $("#description").val(),
+	          units: $("#units").val()
+  	  }
+
+  	  console.log(product)
+  	var productId = $("#id").val()
+  	if(productId==""){
+    	alert("Please enter Product ID")
+    	return
+    }
+  	 if(!isValid(productId)){
+  		 alert("Please enter a valid product Id")
+  		 return
+  	 }
+  	
+	    
+	    $.ajax({
+			method: 'POST',
+			url: '/api/products',
+			data: JSON.stringify(product),
+			contentType: "application/json; charset=utf-8",
+	        dataType: "json",
+			success: function (response) {
+				alert("Product Added Successfully");
+	            },
+			error: function(response){
+				alert(response.status+" "+response.responseText);
+			}
+		})
+	});
+   
+  		
+    
+  	 function isValid(prodId){
+     	var pattern = /P\d/;
+
+     	if (pattern.test(prodId)) {    	   
+     	    return true;
+     	}else{
+     	return false;
+     	}
+     }
+  </script>
+  </body>
+</html>

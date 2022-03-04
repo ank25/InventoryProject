@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html xmlns:th="https://thymeleaf.org"> 
+<head>
+<meta charset="ISO-8859-1">
+<title>Product Inventory</title>
+<link
+      rel="stylesheet"
+      href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css"
+    />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+    <div class="col-sm-6 col-sm-offset-3">
+      <h1>Welcome to Product Inventory</h1></div>
+   
+<table class="table table-striped">
+    <tr  class="bg-info">
+        <th>Product Name</th>
+        <th>Product Description</th>
+        <th>Units</th>
+    </tr>
+
+    <tbody id="myTable">
+        
+    </tbody>
+</table>
+<div></div>
+<div id="search-grp" class="form-group">
+          <div>
+          <label for="search"></label>
+          <input
+            type="text"
+            class="form-control"
+            id="product-category"
+            name="product-category-name"
+            placeholder="Product Category"
+          />
+          </div>
+         <button type="submit" id="search" class="btn btn-success">Search
+        </button>
+      
+        <button type="submit" id="show" class="btn btn-success">Show All
+        </button>
+</div>
+<div id="search-grp" class="form-group">
+        <form action="add" method="GET">
+        <button type="submit" id="add" class="btn btn-success">Add
+        </button>
+        </form>
+</div>
+<div id="search-grp" class="form-group">       
+         <form action="update" method="GET">
+        <button type="submit" id="update" class="btn btn-success">Update
+        </button>
+        </form>
+</div>
+        
+        
+<script>
+	var myArray = []
+	
+	//onClick Show All button, get all the products
+	$("#show").on("click", function(e) {
+	    e.preventDefault();
+	    $.ajax({
+			method: 'GET',
+			url: '/api/products',
+			success: function(response){
+				myArray = response
+				buildTable(myArray)
+				console.log(response);
+			},
+			error: function(response){
+				console.log(response.responseText);
+				alert(response.status+" "+response.responseText);
+			}
+		})
+	});
+
+	//onClick Search button, get products of a given Product Category
+	$("#search").on("click", function(e) {
+	    e.preventDefault();
+	    //var productCategory= document.getElementById('product-category').value
+	    var productCategory = $("#product-category").val()
+	    console.log('Product Category is: '+productCategory)
+	    $.ajax({
+			method: 'GET',
+			url: '/api/products/'+productCategory,
+			success: function(response){
+				myArray = response
+				buildTable(myArray)
+				console.log(response);
+			},
+			error: function(response){
+				console.log(response.responseText);
+				alert(response.status+" "+response.responseText);
+			}
+		})
+	});
+
+	function buildTable(responseData){
+		
+		clearTableBody()
+		var table = document.getElementById('myTable')	    
+		for (var i = 0; i < responseData.length; i++){
+			var row = `<tr>
+							<td>${responseData[i].name}</td>
+							<td>${responseData[i].description}</td>
+							<td>${responseData[i].units}</td>
+					  </tr>`
+			table.innerHTML += row
+		}
+	}
+	
+	function clearTableBody(){
+		document.getElementById("myTable").innerHTML = "";
+	}
+</script>
+</body>
+</html> 
